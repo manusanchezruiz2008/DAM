@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Horario de 1º DAM de Manu - Curso 2026/2027" />
+  <title>Horario DAM 2026/2027 - Manu</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #11182b;
+      --panel-2: #172036;
+      --text: #f4f7fb;
+      --muted: #aab4c8;
+      --border: rgba(255,255,255,.10);
+      --shadow: 0 24px 60px rgba(0,0,0,.28);
+      --radius: 22px;
+      --prog: #6c8cff;
+      --bbdd: #7d6bff;
+      --digital: #00a8a8;
+      --ed: #ff8b5c;
+      --lm: #d16cff;
+      --ipe: #48b96d;
+      --si: #f0b44d;
+      --sost: #2fb39f;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(108,140,255,.18), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(209,108,255,.12), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      padding: 32px 18px 48px;
+    }
+
+    .wrap {
+      width: min(1500px, 100%);
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+      padding: 0 2px;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      color: var(--muted);
+      font-size: .82rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 4.1rem);
+      line-height: .98;
+      letter-spacing: -.045em;
+    }
+
+    .sub {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .badge {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      padding: 12px 16px;
+      border-radius: 999px;
+      color: #dce4f5;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+    }
+
+    .table-scroll { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      min-width: 1050px;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: fixed;
+    }
+
+    thead th {
+      background: rgba(255,255,255,.045);
+      color: #d9e1f0;
+      font-size: .83rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 18px 14px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    th:first-child { width: 145px; }
+
+    td, th { border-right: 1px solid var(--border); }
+    tr > *:last-child { border-right: 0; }
+
+    tbody tr:not(.break) td,
+    tbody tr:not(.break) th {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .time {
+      background: rgba(255,255,255,.028);
+      color: #cfd8e8;
+      font-weight: 900;
+      text-align: center;
+      font-size: .95rem;
+      padding: 18px 10px;
+      vertical-align: middle;
+    }
+
+    .subject {
+      min-height: 82px;
+      padding: 11px;
+      vertical-align: middle;
+      background: rgba(255,255,255,.015);
+    }
+
+    .pill {
+      min-height: 60px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 15px;
+      padding: 12px 10px;
+      font-weight: 850;
+      line-height: 1.2;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.11);
+    }
+
+    .prog .pill { background: linear-gradient(135deg, rgba(108,140,255,.37), rgba(108,140,255,.18)); }
+    .bbdd .pill { background: linear-gradient(135deg, rgba(125,107,255,.37), rgba(125,107,255,.18)); }
+    .digital .pill { background: linear-gradient(135deg, rgba(0,168,168,.36), rgba(0,168,168,.17)); }
+    .ed .pill { background: linear-gradient(135deg, rgba(255,139,92,.38), rgba(255,139,92,.18)); }
+    .lm .pill { background: linear-gradient(135deg, rgba(209,108,255,.36), rgba(209,108,255,.17)); }
+    .ipe .pill { background: linear-gradient(135deg, rgba(72,185,109,.37), rgba(72,185,109,.17)); }
+    .si .pill { background: linear-gradient(135deg, rgba(240,180,77,.38), rgba(240,180,77,.18)); }
+    .sost .pill { background: linear-gradient(135deg, rgba(47,179,159,.37), rgba(47,179,159,.17)); }
+
+    .convalidada .pill {
+      position: relative;
+      opacity: .64;
+      filter: saturate(.75);
+      padding-bottom: 28px;
+    }
+
+    .convalidada .pill::after {
+      content: "CONVALIDADA";
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: .62rem;
+      letter-spacing: .09em;
+      font-weight: 950;
+      color: rgba(255,255,255,.76);
+    }
+
+    .break th,
+    .break td {
+      background: rgba(255,255,255,.055);
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 900;
+      text-align: center;
+      font-size: .82rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: #d5ddef;
+      font-size: .84rem;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .88rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 700px) {
+      body { padding: 20px 10px 32px; }
+      .hero { align-items: flex-start; flex-direction: column; }
+      .badge { font-size: .86rem; }
+      .card { border-radius: 18px; }
+    }
+
+    @media print {
+      body { background: #fff; color: #111; padding: 0; }
+      .hero, .legend, .note { color: #111; }
+      .card { box-shadow: none; border-color: #ccc; }
+      table { min-width: 0; }
+      thead th, .time, .break th, .break td { color: #111; background: #f2f2f2; }
+      .pill { color: #111; box-shadow: none; border-color: #bbb; }
+      .sub, .eyebrow, .note { color: #444; }
+      .badge { color: #111; border-color: #ccc; background: #f5f5f5; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Curso 2026 / 2027</p>
+        <h1>Horario · 1º DAM</h1>
+        <p class="sub">Manu · Desarrollo de Aplicaciones Multiplataforma</p>
+      </div>
+      <div class="badge">Lunes a viernes · 08:15–14:45</div>
+    </header>
+
+    <section class="card" aria-label="Horario semanal">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Hora</th>
+              <th>Lunes</th>
+              <th>Martes</th>
+              <th>Miércoles</th>
+              <th>Jueves</th>
+              <th>Viernes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="time">08:15–09:15</th>
+              <td class="subject prog"><div class="pill">Programación</div></td>
+              <td class="subject bbdd"><div class="pill">Bases de Datos</div></td>
+              <td class="subject digital convalidada"><div class="pill">Digitalización Aplicada a los Sectores Productivos GS</div></td>
+              <td class="subject ed"><div class="pill">Entornos de Desarrollo</div></td>
+              <td class="subject lm"><div class="pill">Lenguajes de marcas y sistemas de gestión de información</div></td>
+            </tr>
+            <tr>
+              <th class="time">09:15–10:15</th>
+              <td class="subject prog"><div class="pill">Programación</div></td>
+              <td class="subject bbdd"><div class="pill">Bases de Datos</div></td>
+              <td class="subject bbdd"><div class="pill">Bases de Datos</div></td>
+              <td class="subject prog"><div class="pill">Programación</div></td>
+              <td class="subject prog"><div class="pill">Programación</div></td>
+            </tr>
+            <tr>
+              <th class="time">10:15–11:15</th>
+              <td class="subject ed"><div class="pill">Entornos de Desarrollo</div></td>
+              <td class="subject prog"><div class="pill">Programación</div></td>
+              <td class="subject bbdd"><div class="pill">Bases de Datos</div></td>
+              <td class="subject prog"><div class="pill">Programación</div></td>
+              <td class="subject prog"><div class="pill">Programación</div></td>
+            </tr>
+
+            <tr class="break">
+              <th>11:15–11:45</th>
+              <td colspan="5">Recreo</td>
+            </tr>
+
+            <tr>
+              <th class="time">11:45–12:45</th>
+              <td class="subject ipe convalidada"><div class="pill">IPE I</div></td>
+              <td class="subject ed"><div class="pill">Entornos de Desarrollo</div></td>
+              <td class="subject lm"><div class="pill">Lenguajes de marcas y sistemas de gestión de información</div></td>
+              <td class="subject si"><div class="pill">Sistemas Informáticos</div></td>
+              <td class="subject bbdd"><div class="pill">Bases de Datos</div></td>
+            </tr>
+            <tr>
+              <th class="time">12:45–13:45</th>
+              <td class="subject lm"><div class="pill">Lenguajes de marcas y sistemas de gestión de información</div></td>
+              <td class="subject sost convalidada"><div class="pill">Sostenibilidad Aplicada al Sector Productivo</div></td>
+              <td class="subject prog"><div class="pill">Programación</div></td>
+              <td class="subject si"><div class="pill">Sistemas Informáticos</div></td>
+              <td class="subject bbdd"><div class="pill">Bases de Datos</div></td>
+            </tr>
+            <tr>
+              <th class="time">13:45–14:45</th>
+              <td class="subject si"><div class="pill">Sistemas Informáticos</div></td>
+              <td class="subject si"><div class="pill">Sistemas Informáticos</div></td>
+              <td class="subject ipe convalidada"><div class="pill">IPE I</div></td>
+              <td class="subject ipe convalidada"><div class="pill">IPE I</div></td>
+              <td class="subject si"><div class="pill">Sistemas Informáticos</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="legend" aria-label="Leyenda de colores">
+      <span><i class="dot" style="background:var(--prog)"></i>Programación</span>
+      <span><i class="dot" style="background:var(--bbdd)"></i>Bases de Datos</span>
+      <span><i class="dot" style="background:var(--ed)"></i>Entornos</span>
+      <span><i class="dot" style="background:var(--lm)"></i>Lenguajes de marcas</span>
+      <span><i class="dot" style="background:var(--si)"></i>Sistemas Informáticos</span>
+      <span><i class="dot" style="background:var(--ipe)"></i>IPE I</span>
+      <span><i class="dot" style="background:var(--digital)"></i>Digitalización</span>
+      <span><i class="dot" style="background:var(--sost)"></i>Sostenibilidad</span>
+    </div>
+
+    <p class="note">Las asignaturas convalidadas aparecen atenuadas y marcadas como “CONVALIDADA”. El horario se adapta a móvil y también está preparado para imprimir.</p>
+  </main>
+</body>
+</html>
