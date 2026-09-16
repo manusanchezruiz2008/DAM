@@ -230,6 +230,58 @@
       display: inline-block;
     }
 
+
+    .live-status {
+      margin: 0 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,.045);
+      color: #e8eefb;
+      font-weight: 800;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    }
+
+    .live-status .label { color: var(--muted); font-weight: 700; }
+
+    .today-header {
+      background: linear-gradient(180deg, rgba(108,140,255,.24), rgba(108,140,255,.08)) !important;
+      color: #fff !important;
+      box-shadow: inset 0 -3px 0 rgba(108,140,255,.85);
+    }
+
+    .today-cell { background: rgba(108,140,255,.045); }
+
+    .current-cell .pill {
+      outline: 3px solid rgba(255,255,255,.92);
+      outline-offset: -2px;
+      box-shadow: 0 0 0 5px rgba(108,140,255,.25), 0 0 28px rgba(108,140,255,.34), inset 0 1px 0 rgba(255,255,255,.18);
+      transform: translateY(-1px);
+      animation: currentPulse 1.8s ease-in-out infinite;
+    }
+
+    .current-time {
+      background: rgba(108,140,255,.16) !important;
+      color: #fff !important;
+      box-shadow: inset 4px 0 0 var(--prog);
+    }
+
+    .current-break td,
+    .current-break th {
+      background: rgba(108,140,255,.18) !important;
+      color: #fff;
+      box-shadow: inset 0 0 0 2px rgba(108,140,255,.42);
+    }
+
+    @keyframes currentPulse {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.16); }
+    }
+
     .note {
       margin-top: 14px;
       color: var(--muted);
@@ -267,17 +319,23 @@
       <div class="badge">Lunes a viernes · 08:15–14:45</div>
     </header>
 
+
+    <div class="live-status" id="liveStatus" aria-live="polite">
+      <span><span class="label">Ahora:</span> calculando…</span>
+      <span id="liveClock"></span>
+    </div>
+
     <section class="card" aria-label="Horario semanal">
       <div class="table-scroll">
         <table>
           <thead>
             <tr>
               <th>Hora</th>
-              <th>Lunes</th>
-              <th>Martes</th>
-              <th>Miércoles</th>
-              <th>Jueves</th>
-              <th>Viernes</th>
+              <th data-day="1">Lunes</th>
+              <th data-day="2">Martes</th>
+              <th data-day="3">Miércoles</th>
+              <th data-day="4">Jueves</th>
+              <th data-day="5">Viernes</th>
             </tr>
           </thead>
           <tbody>
@@ -353,5 +411,92 @@
 
     <p class="note">Las asignaturas convalidadas aparecen atenuadas y marcadas como “CONVALIDADA”. El horario se adapta a móvil y también está preparado para imprimir.</p>
   </main>
+
+  <script>
+    const schedule = [
+      { start: '08:15', end: '09:15', row: 0 },
+      { start: '09:15', end: '10:15', row: 1 },
+      { start: '10:15', end: '11:15', row: 2 },
+      { start: '11:15', end: '11:45', break: true },
+      { start: '11:45', end: '12:45', row: 4 },
+      { start: '12:45', end: '13:45', row: 5 },
+      { start: '13:45', end: '14:45', row: 6 }
+    ];
+
+    const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+    function toMinutes(time) {
+      const [h, m] = time.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function updateScheduleHighlight() {
+      const now = new Date();
+      const day = now.getDay();
+      const minutes = now.getHours() * 60 + now.getMinutes();
+      const rows = [...document.querySelectorAll('tbody tr')];
+      const status = document.getElementById('liveStatus');
+      const clock = document.getElementById('liveClock');
+
+      document.querySelectorAll('.today-header').forEach(el => el.classList.remove('today-header'));
+      document.querySelectorAll('.today-cell').forEach(el => el.classList.remove('today-cell'));
+      document.querySelectorAll('.current-cell').forEach(el => el.classList.remove('current-cell'));
+      document.querySelectorAll('.current-time').forEach(el => el.classList.remove('current-time'));
+      document.querySelectorAll('.current-break').forEach(el => el.classList.remove('current-break'));
+
+      clock.textContent = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+      if (day >= 1 && day <= 5) {
+        const header = document.querySelector(`thead th[data-day="${day}"]`);
+        if (header) header.classList.add('today-header');
+
+        rows.forEach(row => {
+          if (!row.classList.contains('break')) {
+            const cells = row.querySelectorAll('td');
+            if (cells[day - 1]) cells[day - 1].classList.add('today-cell');
+          }
+        });
+      }
+
+      if (day < 1 || day > 5) {
+        status.firstElementChild.innerHTML = `<span class="label">Ahora:</span> fin de semana · no hay clase`;
+        return;
+      }
+
+      const current = schedule.find(slot => minutes >= toMinutes(slot.start) && minutes < toMinutes(slot.end));
+
+      if (!current) {
+        if (minutes < toMinutes('08:15')) {
+          status.firstElementChild.innerHTML = `<span class="label">Ahora:</span> aún no han empezado las clases · ${dayNames[day]}`;
+        } else {
+          status.firstElementChild.innerHTML = `<span class="label">Ahora:</span> clases terminadas por hoy · ${dayNames[day]}`;
+        }
+        return;
+      }
+
+      if (current.break) {
+        const breakRow = rows.find(r => r.classList.contains('break'));
+        if (breakRow) breakRow.classList.add('current-break');
+        status.firstElementChild.innerHTML = `<span class="label">Ahora:</span> Recreo · hasta las ${current.end}`;
+        return;
+      }
+
+      const row = rows[current.row];
+      if (!row) return;
+
+      const timeCell = row.querySelector('.time');
+      const subjectCell = row.querySelectorAll('td')[day - 1];
+      if (timeCell) timeCell.classList.add('current-time');
+      if (subjectCell) {
+        subjectCell.classList.add('current-cell');
+        const subject = subjectCell.querySelector('.pill')?.childNodes[0]?.textContent.trim() || subjectCell.textContent.trim();
+        status.firstElementChild.innerHTML = `<span class="label">Ahora:</span> ${subject} · hasta las ${current.end}`;
+      }
+    }
+
+    updateScheduleHighlight();
+    setInterval(updateScheduleHighlight, 15000);
+  </script>
+
 </body>
 </html>
