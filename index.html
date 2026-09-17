@@ -1,270 +1,974 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>DAM | Manuel Sánchez</title>
-    <link rel="stylesheet" href="styles.css">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f1f5f9;
+            color: #172033;
+        }
+
+
+        /* =========================
+           CABECERA
+        ========================= */
+
+        header {
+            background-color: #0f172a;
+            height: 75px;
+            padding: 0 8%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            color: #38bdf8;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #38bdf8;
+        }
+
+
+        /* =========================
+           PORTADA
+        ========================= */
+
+        .hero {
+            min-height: 600px;
+
+            background: linear-gradient(
+                135deg,
+                #0f172a,
+                #172554,
+                #075985
+            );
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 80px 10%;
+            gap: 60px;
+        }
+
+        .hero-text {
+            max-width: 700px;
+        }
+
+        .pequeno {
+            color: #38bdf8;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .hero h1 {
+            font-size: 55px;
+            line-height: 1.1;
+            margin-bottom: 25px;
+        }
+
+        .hero-text > p:not(.pequeno) {
+            color: #cbd5e1;
+            font-size: 18px;
+            line-height: 1.7;
+            margin-bottom: 35px;
+        }
+
+
+        /* =========================
+           BOTÓN
+        ========================= */
+
+        .boton {
+            display: inline-block;
+
+            background-color: #38bdf8;
+            color: #082f49;
+
+            padding: 15px 25px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+            font-weight: bold;
+
+            transition: 0.3s;
+        }
+
+        .boton:hover {
+            background-color: #7dd3fc;
+            transform: translateY(-3px);
+        }
+
+
+        /* =========================
+           TARJETA DE PORTADA
+        ========================= */
+
+        .hero-card {
+            width: 300px;
+            height: 300px;
+
+            background-color: rgba(255, 255, 255, 0.08);
+
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            border-radius: 25px;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+        }
+
+        .hero-card .icono-grande {
+            font-size: 70px;
+            margin-bottom: 15px;
+        }
+
+        .hero-card h2 {
+            font-size: 42px;
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        .hero-card p {
+            color: #cbd5e1;
+        }
+
+
+        /* =========================
+           SECCIONES
+        ========================= */
+
+        .seccion {
+            padding: 90px 10%;
+        }
+
+        .titulo {
+            margin-bottom: 45px;
+        }
+
+        .titulo h2 {
+            font-size: 38px;
+        }
+
+
+        /* =========================
+           TARJETAS
+        ========================= */
+
+        .tarjetas {
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 25px;
+        }
+
+        .tarjeta {
+            background-color: white;
+
+            padding: 30px;
+
+            border-radius: 15px;
+
+            text-decoration: none;
+            color: #172033;
+
+            border: 1px solid #e2e8f0;
+
+            transition: 0.3s;
+        }
+
+        .tarjeta:hover {
+            transform: translateY(-7px);
+
+            border-color: #38bdf8;
+
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
+        }
+
+        .tarjeta .icono {
+            font-size: 38px;
+            margin-bottom: 20px;
+        }
+
+        .tarjeta h3 {
+            font-size: 21px;
+            margin-bottom: 12px;
+        }
+
+        .tarjeta p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+
+        /* =========================
+           MÓDULOS
+        ========================= */
+
+        .modulos {
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 18px;
+        }
+
+        .modulo {
+            background-color: white;
+
+            border: 1px solid #e2e8f0;
+
+            padding: 25px;
+
+            border-radius: 12px;
+
+            transition: 0.3s;
+        }
+
+        .modulo:hover {
+            border-color: #38bdf8;
+            transform: translateY(-3px);
+        }
+
+        .modulo span {
+            color: #0284c7;
+            font-weight: bold;
+        }
+
+        .modulo h3 {
+            margin: 10px 0;
+        }
+
+        .modulo p {
+            color: #64748b;
+        }
+
+
+        /* =========================
+           BLOQUES
+        ========================= */
+
+        .bloque {
+            margin: 30px 10%;
+
+            padding: 55px;
+
+            border-radius: 20px;
+
+            background: linear-gradient(
+                135deg,
+                #0f172a,
+                #172554
+            );
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bloque h2 {
+            font-size: 35px;
+            margin-bottom: 15px;
+        }
+
+        .bloque p:not(.pequeno) {
+            color: #cbd5e1;
+            max-width: 650px;
+            line-height: 1.6;
+        }
+
+        .numero {
+            font-size: 80px;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            margin-top: 90px;
+
+            padding: 50px 10%;
+
+            background-color: #020617;
+
+            color: white;
+        }
+
+        footer h3 {
+            color: #38bdf8;
+
+            font-size: 25px;
+
+            margin-bottom: 15px;
+        }
+
+        footer p {
+            color: #94a3b8;
+
+            margin-top: 8px;
+        }
+
+
+        /* =========================
+           MÓVILES
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            header {
+                padding: 20px;
+                height: auto;
+
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .tarjetas {
+                grid-template-columns: 1fr;
+            }
+
+            .modulos {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .hero {
+                padding: 60px 7%;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+
+            .hero-card {
+                width: 240px;
+                height: 240px;
+            }
+
+            .seccion {
+                padding: 60px 7%;
+            }
+
+            .bloque {
+                margin: 20px 7%;
+                padding: 35px;
+            }
+
+            .numero {
+                display: none;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
+
+    <!-- CABECERA -->
+
     <header>
-        <div class="logo">DAM</div>
+
+        <div class="logo">
+            DAM
+        </div>
 
         <nav>
-            <a href="index.html">Inicio</a>
-            <a href="horario.html">Horario</a>
-            <a href="#modulos">Módulos</a>
-            <a href="#proyectos">Proyectos</a>
-            <a href="#recursos">Recursos</a>
+
+            <a href="index.html">
+                Inicio
+            </a>
+
+            <a href="horario.html">
+                Horario
+            </a>
+
+            <a href="#modulos">
+                Módulos
+            </a>
+
+            <a href="#apuntes">
+                Apuntes
+            </a>
+
+            <a href="#proyectos">
+                Proyectos
+            </a>
+
         </nav>
+
     </header>
 
 
-    <main>
 
-        <section class="hero">
-            <div class="hero-text">
-                <p class="pequeno">GRADO SUPERIOR</p>
+    <!-- PORTADA -->
 
-                <h1>Desarrollo de Aplicaciones Multiplataforma</h1>
+    <section class="hero">
+
+        <div class="hero-text">
+
+            <p class="pequeno">
+                GRADO SUPERIOR
+            </p>
+
+            <h1>
+                Desarrollo de Aplicaciones Multiplataforma
+            </h1>
+
+            <p>
+                Mi espacio personal para organizar mis estudios,
+                apuntes, ejercicios, proyectos y recursos de DAM.
+            </p>
+
+            <a class="boton" href="horario.html">
+                Ver horario
+            </a>
+
+        </div>
+
+
+        <div class="hero-card">
+
+            <div class="icono-grande">
+                💻
+            </div>
+
+            <h2>
+                DAM
+            </h2>
+
+            <p>
+                Aprender · Crear · Programar
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ORGANIZACIÓN -->
+
+    <section class="seccion">
+
+        <div class="titulo">
+
+            <p class="pequeno">
+                ORGANIZACIÓN
+            </p>
+
+            <h2>
+                Mi espacio de estudio
+            </h2>
+
+        </div>
+
+
+        <div class="tarjetas">
+
+
+            <a href="horario.html" class="tarjeta">
+
+                <div class="icono">
+                    🗓️
+                </div>
+
+                <h3>
+                    Horario
+                </h3>
 
                 <p>
-                    Mi espacio personal para organizar mis estudios,
-                    apuntes, ejercicios y proyectos de DAM.
+                    Consulta mi horario semanal y organiza
+                    las clases de cada módulo.
                 </p>
 
-                <a class="boton" href="horario.html">
-                    Ver horario
-                </a>
-            </div>
-
-            <div class="hero-card">
-                <span>💻</span>
-                <h2>DAM</h2>
-                <p>Aprender · Crear · Programar</p>
-            </div>
-        </section>
+            </a>
 
 
-        <section class="seccion">
+            <a href="#modulos" class="tarjeta">
 
-            <div class="titulo">
-                <p class="pequeno">ORGANIZACIÓN</p>
-                <h2>Mi espacio de estudio</h2>
-            </div>
-
-            <div class="tarjetas">
-
-                <a href="horario.html" class="tarjeta">
-                    <div class="icono">🗓️</div>
-                    <h3>Horario</h3>
-                    <p>
-                        Consulta mi horario semanal y organiza
-                        las clases de cada módulo.
-                    </p>
-                </a>
-
-                <a href="#modulos" class="tarjeta">
-                    <div class="icono">📚</div>
-                    <h3>Módulos</h3>
-                    <p>
-                        Toda la información y contenidos
-                        de los módulos de DAM.
-                    </p>
-                </a>
-
-                <a href="#apuntes" class="tarjeta">
-                    <div class="icono">📖</div>
-                    <h3>Apuntes</h3>
-                    <p>
-                        Apuntes, resúmenes y explicaciones
-                        para estudiar.
-                    </p>
-                </a>
-
-                <a href="#ejercicios" class="tarjeta">
-                    <div class="icono">📝</div>
-                    <h3>Ejercicios</h3>
-                    <p>
-                        Prácticas y ejercicios realizados
-                        durante el curso.
-                    </p>
-                </a>
-
-                <a href="#proyectos" class="tarjeta">
-                    <div class="icono">🚀</div>
-                    <h3>Proyectos</h3>
-                    <p>
-                        Proyectos personales y trabajos
-                        realizados durante DAM.
-                    </p>
-                </a>
-
-                <a href="#recursos" class="tarjeta">
-                    <div class="icono">🔗</div>
-                    <h3>Recursos</h3>
-                    <p>
-                        Documentación, herramientas y
-                        páginas útiles para aprender.
-                    </p>
-                </a>
-
-            </div>
-
-        </section>
-
-
-        <section id="modulos" class="seccion">
-
-            <div class="titulo">
-                <p class="pequeno">FORMACIÓN</p>
-                <h2>Módulos de DAM</h2>
-            </div>
-
-            <div class="modulos">
-
-                <div class="modulo">
-                    <span>01</span>
-                    <h3>Programación</h3>
-                    <p>Desarrollo y programación de aplicaciones.</p>
+                <div class="icono">
+                    📚
                 </div>
 
-                <div class="modulo">
-                    <span>02</span>
-                    <h3>Bases de Datos</h3>
-                    <p>Diseño, gestión y consultas de bases de datos.</p>
-                </div>
-
-                <div class="modulo">
-                    <span>03</span>
-                    <h3>Lenguajes de Marcas</h3>
-                    <p>HTML, CSS, XML y tecnologías web.</p>
-                </div>
-
-                <div class="modulo">
-                    <span>04</span>
-                    <h3>Entornos de Desarrollo</h3>
-                    <p>Herramientas y metodologías de desarrollo.</p>
-                </div>
-
-                <div class="modulo">
-                    <span>05</span>
-                    <h3>Sistemas Informáticos</h3>
-                    <p>Sistemas, software y hardware.</p>
-                </div>
-
-                <div class="modulo">
-                    <span>06</span>
-                    <h3>Digitalización</h3>
-                    <p>Tecnologías digitales y transformación digital.</p>
-                </div>
-
-                <div class="modulo">
-                    <span>07</span>
-                    <h3>IPE I</h3>
-                    <p>Itinerario personal para la empleabilidad.</p>
-                </div>
-
-                <div class="modulo">
-                    <span>08</span>
-                    <h3>Sostenibilidad</h3>
-                    <p>Sostenibilidad aplicada al sistema productivo.</p>
-                </div>
-
-                <div class="modulo">
-                    <span>09</span>
-                    <h3>Inglés Profesional</h3>
-                    <p>Inglés aplicado al ámbito profesional.</p>
-                </div>
-
-                <div class="modulo">
-                    <span>10</span>
-                    <h3>Proyecto Intermodular</h3>
-                    <p>Aplicación práctica de los conocimientos del ciclo.</p>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <section id="apuntes" class="bloque">
-
-            <div>
-                <p class="pequeno">ESTUDIO</p>
-                <h2>Apuntes</h2>
+                <h3>
+                    Módulos
+                </h3>
 
                 <p>
-                    Aquí iré organizando mis apuntes y contenidos
-                    importantes de cada módulo.
+                    Consulta los módulos y contenidos
+                    que forman parte de DAM.
                 </p>
-            </div>
 
-            <div class="numero">01</div>
-
-        </section>
+            </a>
 
 
-        <section id="ejercicios" class="bloque">
+            <a href="#apuntes" class="tarjeta">
 
-            <div>
-                <p class="pequeno">PRÁCTICA</p>
-                <h2>Ejercicios</h2>
+                <div class="icono">
+                    📖
+                </div>
+
+                <h3>
+                    Apuntes
+                </h3>
 
                 <p>
-                    Ejercicios, actividades y prácticas realizadas
+                    Apuntes, resúmenes y contenidos
+                    importantes para estudiar.
+                </p>
+
+            </a>
+
+
+            <a href="#ejercicios" class="tarjeta">
+
+                <div class="icono">
+                    📝
+                </div>
+
+                <h3>
+                    Ejercicios
+                </h3>
+
+                <p>
+                    Ejercicios y prácticas realizados
                     durante el curso.
                 </p>
-            </div>
 
-            <div class="numero">02</div>
-
-        </section>
+            </a>
 
 
-        <section id="proyectos" class="bloque">
+            <a href="#proyectos" class="tarjeta">
 
-            <div>
-                <p class="pequeno">DESARROLLO</p>
-                <h2>Proyectos</h2>
+                <div class="icono">
+                    🚀
+                </div>
 
-                <p>
-                    Proyectos de clase y proyectos personales
-                    realizados durante DAM.
-                </p>
-            </div>
-
-            <div class="numero">03</div>
-
-        </section>
-
-
-        <section id="recursos" class="bloque">
-
-            <div>
-                <p class="pequeno">APRENDIZAJE</p>
-                <h2>Recursos</h2>
+                <h3>
+                    Proyectos
+                </h3>
 
                 <p>
-                    Documentación, herramientas, tutoriales y
-                    recursos útiles para seguir aprendiendo.
+                    Proyectos de clase y proyectos
+                    personales.
                 </p>
+
+            </a>
+
+
+            <a href="#recursos" class="tarjeta">
+
+                <div class="icono">
+                    🔗
+                </div>
+
+                <h3>
+                    Recursos
+                </h3>
+
+                <p>
+                    Documentación, herramientas y
+                    recursos útiles.
+                </p>
+
+            </a>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- MÓDULOS -->
+
+    <section id="modulos" class="seccion">
+
+        <div class="titulo">
+
+            <p class="pequeno">
+                FORMACIÓN
+            </p>
+
+            <h2>
+                Módulos de DAM
+            </h2>
+
+        </div>
+
+
+        <div class="modulos">
+
+
+            <div class="modulo">
+
+                <span>01</span>
+
+                <h3>
+                    Programación
+                </h3>
+
+                <p>
+                    Desarrollo y programación de aplicaciones.
+                </p>
+
             </div>
 
-            <div class="numero">04</div>
 
-        </section>
+            <div class="modulo">
 
-    </main>
+                <span>02</span>
 
+                <h3>
+                    Bases de Datos
+                </h3>
+
+                <p>
+                    Diseño, gestión y consultas de bases de datos.
+                </p>
+
+            </div>
+
+
+            <div class="modulo">
+
+                <span>03</span>
+
+                <h3>
+                    Lenguajes de Marcas
+                </h3>
+
+                <p>
+                    HTML, CSS, XML y tecnologías web.
+                </p>
+
+            </div>
+
+
+            <div class="modulo">
+
+                <span>04</span>
+
+                <h3>
+                    Entornos de Desarrollo
+                </h3>
+
+                <p>
+                    Herramientas y metodologías de desarrollo.
+                </p>
+
+            </div>
+
+
+            <div class="modulo">
+
+                <span>05</span>
+
+                <h3>
+                    Sistemas Informáticos
+                </h3>
+
+                <p>
+                    Sistemas, hardware y software.
+                </p>
+
+            </div>
+
+
+            <div class="modulo">
+
+                <span>06</span>
+
+                <h3>
+                    Digitalización
+                </h3>
+
+                <p>
+                    Tecnologías digitales y transformación digital.
+                </p>
+
+            </div>
+
+
+            <div class="modulo">
+
+                <span>07</span>
+
+                <h3>
+                    IPE I
+                </h3>
+
+                <p>
+                    Itinerario personal para la empleabilidad.
+                </p>
+
+            </div>
+
+
+            <div class="modulo">
+
+                <span>08</span>
+
+                <h3>
+                    Sostenibilidad
+                </h3>
+
+                <p>
+                    Sostenibilidad aplicada al sistema productivo.
+                </p>
+
+            </div>
+
+
+            <div class="modulo">
+
+                <span>09</span>
+
+                <h3>
+                    Inglés Profesional
+                </h3>
+
+                <p>
+                    Inglés aplicado al ámbito profesional.
+                </p>
+
+            </div>
+
+
+            <div class="modulo">
+
+                <span>10</span>
+
+                <h3>
+                    Proyecto Intermodular
+                </h3>
+
+                <p>
+                    Integración de los conocimientos del ciclo.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- APUNTES -->
+
+    <section id="apuntes" class="bloque">
+
+        <div>
+
+            <p class="pequeno">
+                ESTUDIO
+            </p>
+
+            <h2>
+                Apuntes
+            </h2>
+
+            <p>
+                Aquí iré organizando mis apuntes,
+                resúmenes y contenidos importantes.
+            </p>
+
+        </div>
+
+        <div class="numero">
+            01
+        </div>
+
+    </section>
+
+
+
+    <!-- EJERCICIOS -->
+
+    <section id="ejercicios" class="bloque">
+
+        <div>
+
+            <p class="pequeno">
+                PRÁCTICA
+            </p>
+
+            <h2>
+                Ejercicios
+            </h2>
+
+            <p>
+                Ejercicios, actividades y prácticas
+                realizadas durante el curso.
+            </p>
+
+        </div>
+
+        <div class="numero">
+            02
+        </div>
+
+    </section>
+
+
+
+    <!-- PROYECTOS -->
+
+    <section id="proyectos" class="bloque">
+
+        <div>
+
+            <p class="pequeno">
+                DESARROLLO
+            </p>
+
+            <h2>
+                Proyectos
+            </h2>
+
+            <p>
+                Proyectos de clase y proyectos personales
+                realizados durante DAM.
+            </p>
+
+        </div>
+
+        <div class="numero">
+            03
+        </div>
+
+    </section>
+
+
+
+    <!-- RECURSOS -->
+
+    <section id="recursos" class="bloque">
+
+        <div>
+
+            <p class="pequeno">
+                APRENDIZAJE
+            </p>
+
+            <h2>
+                Recursos
+            </h2>
+
+            <p>
+                Documentación, herramientas y recursos
+                útiles para seguir aprendiendo.
+            </p>
+
+        </div>
+
+        <div class="numero">
+            04
+        </div>
+
+    </section>
+
+
+
+    <!-- FOOTER -->
 
     <footer>
-        <h3>💻 DAM</h3>
-        <p>Manuel Sánchez Ruiz · Desarrollo de Aplicaciones Multiplataforma</p>
-        <p>© 2026</p>
+
+        <h3>
+            💻 DAM
+        </h3>
+
+        <p>
+            Manuel Sánchez Ruiz · Desarrollo de Aplicaciones Multiplataforma
+        </p>
+
+        <p>
+            © 2026
+        </p>
+
     </footer>
 
+
 </body>
+
 </html>
