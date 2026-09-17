@@ -4,435 +4,580 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Espacio personal de estudio del ciclo de Desarrollo de Aplicaciones Multiplataforma.">
 
-    <title>DAM | Manuel Sánchez</title>
+    <title>index.html — dam — Manuel Sánchez</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
 
+    /* =========================================================
+       1. TOKENS
+          Paleta de editor oscuro. Cada color tiene un papel
+          concreto, igual que en un tema de VS Code.
+    ========================================================= */
+
+    :root {
+        --fondo:     #10131C;   /* fondo de la ventana */
+        --editor:    #151925;   /* área de código */
+        --panel:     #1A1F2E;   /* barras y paneles */
+        --borde:     #262C3D;
+        --gutter:    #3A4259;   /* números de línea */
+
+        --texto:     #C3CBDD;   /* texto normal */
+        --apagado:   #7C87A3;
+
+        --comentario:#5A6488;
+        --clave:     #7AA2F7;   /* const, return... */
+        --cadena:    #9ECE6A;   /* "textos" */
+        --funcion:   #E0AF68;   /* nombres de función */
+        --variable:  #BB9AF7;   /* propiedades */
+        --numero:    #FF9E64;
+        --acento:    #7DCFFF;
+
+        --mono: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+        --barra-alta: 34px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 90px;
+    }
+
+    body {
+        background-color: var(--fondo);
+        color: var(--texto);
+        font-family: var(--mono);
+        font-size: 14px;
+        line-height: 1.75;
+        padding-bottom: var(--barra-alta);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+        outline: 2px solid var(--acento);
+        outline-offset: 2px;
+    }
+
+    /* Colores de sintaxis, usados como clases sueltas */
+    .cm { color: var(--comentario); }
+    .kw { color: var(--clave); }
+    .st { color: var(--cadena); }
+    .fn { color: var(--funcion); }
+    .vr { color: var(--variable); }
+    .nu { color: var(--numero); }
+    .pt { color: var(--apagado); }   /* puntuación */
+
+
+    /* =========================================================
+       2. CHROME DE LA VENTANA (barra de título + pestañas)
+    ========================================================= */
+
+    .titulo-ventana {
+        background-color: var(--panel);
+        border-bottom: 1px solid var(--borde);
+
+        height: var(--barra-alta);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 0 14px;
+
+        font-size: 12px;
+        color: var(--apagado);
+    }
+
+    .semaforo {
+        display: flex;
+        gap: 7px;
+    }
+
+    .semaforo i {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background-color: #3A4259;
+    }
+
+    .semaforo i:nth-child(1) { background-color: #F7768E; }
+    .semaforo i:nth-child(2) { background-color: #E0AF68; }
+    .semaforo i:nth-child(3) { background-color: #9ECE6A; }
+
+    .ruta {
+        flex: 1;
+        text-align: center;
+    }
+
+    .pestanas {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+
+        background-color: var(--panel);
+        border-bottom: 1px solid var(--borde);
+
+        display: flex;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .pestanas::-webkit-scrollbar { display: none; }
+
+    .pestana {
+        padding: 10px 18px;
+        font-size: 13px;
+        color: var(--apagado);
+        border-right: 1px solid var(--borde);
+        white-space: nowrap;
+        transition: color .15s ease, background-color .15s ease;
+    }
+
+    .pestana:hover {
+        color: var(--texto);
+        background-color: var(--editor);
+    }
+
+    .pestana.activa {
+        color: var(--texto);
+        background-color: var(--editor);
+        border-top: 2px solid var(--acento);
+        padding-top: 8px;
+    }
+
+    .punto {
+        color: var(--acento);
+        margin-left: 8px;
+    }
+
+
+    /* =========================================================
+       3. ESTRUCTURA: EXPLORADOR + EDITOR
+    ========================================================= */
+
+    .espacio {
+        display: grid;
+        grid-template-columns: 236px 1fr;
+        min-height: 100vh;
+    }
+
+    .explorador {
+        background-color: var(--panel);
+        border-right: 1px solid var(--borde);
+        padding: 20px 0;
+
+        position: sticky;
+        top: var(--barra-alta);
+        align-self: start;
+        max-height: calc(100vh - var(--barra-alta));
+        overflow-y: auto;
+    }
+
+    .titulo-panel {
+        font-size: 11px;
+        letter-spacing: .12em;
+        color: var(--apagado);
+        padding: 0 18px 12px;
+    }
+
+    .carpeta {
+        padding: 5px 18px;
+        font-size: 13px;
+        color: var(--texto);
+    }
+
+    .arbol a {
+        display: block;
+        padding: 5px 18px 5px 34px;
+        font-size: 13px;
+        color: var(--apagado);
+        border-left: 2px solid transparent;
+        transition: background-color .15s ease, color .15s ease;
+    }
+
+    .arbol a:hover {
+        background-color: var(--editor);
+        color: var(--texto);
+        border-left-color: var(--acento);
+    }
+
+    .ext { color: var(--gutter); }
+
+    .editor {
+        background-color: var(--editor);
+        padding: 0 0 60px;
+        min-width: 0;   /* evita desbordes en móvil */
+    }
+
+
+    /* =========================================================
+       4. BLOQUES DE CÓDIGO CON NÚMEROS DE LÍNEA
+    ========================================================= */
+
+    .codigo {
+        counter-reset: linea;
+        padding: 26px 0;
+    }
+
+    .linea {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 18px;
+        padding: 1px 20px 1px 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .linea::before {
+        counter-increment: linea;
+        content: counter(linea);
+
+        text-align: right;
+        color: var(--gutter);
+        font-size: 13px;
+        user-select: none;
+    }
+
+    .linea:hover {
+        background-color: rgba(125, 207, 255, .04);
+    }
+
+    .sangria { padding-left: 2ch; }
+
+
+    /* =========================================================
+       5. PORTADA
+    ========================================================= */
+
+    .portada h1 {
+        font-size: clamp(26px, 4.4vw, 42px);
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--texto);
+        letter-spacing: -.01em;
+    }
+
+    .cursor {
+        display: inline-block;
+        width: 9px;
+        height: 1.05em;
+        background-color: var(--acento);
+        vertical-align: text-bottom;
+        margin-left: 4px;
+        animation: parpadeo 1.05s step-end infinite;
+    }
+
+    @keyframes parpadeo {
+        50% { opacity: 0; }
+    }
+
+    .acciones {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 26px 20px 34px 74px;
+    }
+
+    .boton {
+        background-color: var(--acento);
+        color: #0B1017;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 13px;
+        transition: filter .2s ease, transform .2s ease;
+    }
+
+    .boton:hover {
+        filter: brightness(1.12);
+        transform: translateY(-2px);
+    }
+
+    .boton-borde {
+        border: 1px solid var(--borde);
+        color: var(--texto);
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-size: 13px;
+        transition: border-color .2s ease, color .2s ease;
+    }
+
+    .boton-borde:hover {
+        border-color: var(--acento);
+        color: var(--acento);
+    }
+
+
+    /* =========================================================
+       6. SECCIONES
+    ========================================================= */
+
+    .seccion {
+        border-top: 1px solid var(--borde);
+        scroll-margin-top: 80px;
+    }
+
+    .cabecera-seccion {
+        padding: 22px 20px 6px 74px;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .cabecera-seccion h2 {
+        font-size: 19px;
+        font-weight: 700;
+    }
+
+    .cabecera-seccion h2::before {
+        content: "// ";
+        color: var(--comentario);
+        font-weight: 400;
+    }
+
+    .contador {
+        font-size: 12px;
+        color: var(--comentario);
+    }
+
+
+    /* =========================================================
+       7. TERMINAL (índice de la web)
+    ========================================================= */
+
+    .terminal {
+        margin: 18px 20px 30px 74px;
+        border: 1px solid var(--borde);
+        border-radius: 6px;
+        overflow: hidden;
+        background-color: var(--fondo);
+    }
+
+    .terminal-barra {
+        background-color: var(--panel);
+        padding: 7px 14px;
+        font-size: 11px;
+        letter-spacing: .1em;
+        color: var(--apagado);
+        border-bottom: 1px solid var(--borde);
+    }
+
+    .terminal-cuerpo {
+        padding: 14px 0 16px;
+    }
+
+    .prompt {
+        padding: 0 16px 10px;
+        font-size: 13px;
+    }
+
+    .prompt .usuario { color: var(--cadena); }
+    .prompt .dir     { color: var(--clave); }
+
+    .fila {
+        display: grid;
+        grid-template-columns: 110px 190px 1fr;
+        gap: 16px;
+        padding: 6px 16px;
+        font-size: 13px;
+        color: var(--apagado);
+        border-left: 2px solid transparent;
+        transition: background-color .15s ease, border-color .15s ease;
+    }
+
+    .fila:hover {
+        background-color: rgba(125, 207, 255, .05);
+        border-left-color: var(--acento);
+    }
+
+    .fila .permisos { color: var(--gutter); }
+    .fila .nombre   { color: var(--acento); }
+    .fila:hover .nombre { text-decoration: underline; }
+
+
+    /* =========================================================
+       8. PANELES DEL CUADERNO
+    ========================================================= */
+
+    .paneles {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin: 18px 20px 30px 74px;
+    }
+
+    .panel {
+        border: 1px solid var(--borde);
+        border-radius: 6px;
+        background-color: var(--fondo);
+        overflow: hidden;
+        scroll-margin-top: 90px;
+    }
+
+    .panel-barra {
+        background-color: var(--panel);
+        border-bottom: 1px solid var(--borde);
+        padding: 8px 14px;
+        font-size: 12px;
+        color: var(--apagado);
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .panel-cuerpo {
+        padding: 16px 14px;
+        font-size: 13px;
+    }
+
+    .panel-cuerpo p {
+        color: var(--apagado);
+        margin-bottom: 12px;
+    }
+
+    .todo {
+        color: var(--comentario);
+        border-left: 2px solid var(--funcion);
+        padding-left: 12px;
+    }
+
+
+    /* =========================================================
+       9. BARRA DE ESTADO (fija abajo)
+    ========================================================= */
+
+    .estado {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 60;
+
+        height: var(--barra-alta);
+        background-color: #1B2333;
+        border-top: 1px solid var(--borde);
+
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 0 16px;
+
+        font-size: 12px;
+        color: var(--apagado);
+        overflow-x: auto;
+        scrollbar-width: none;
+        white-space: nowrap;
+    }
+
+    .estado::-webkit-scrollbar { display: none; }
+
+    .estado .rama { color: var(--acento); }
+    .estado .derecha { margin-left: auto; }
+
+
+    /* =========================================================
+       10. RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 860px) {
+
+        .espacio {
+            grid-template-columns: 1fr;
+        }
+
+        .explorador {
+            position: static;
+            max-height: none;
+            border-right: none;
+            border-bottom: 1px solid var(--borde);
+            padding: 14px 0;
+        }
+
+        .arbol {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 0 12px;
+        }
+
+        .arbol a {
+            padding: 6px 12px;
+            border: 1px solid var(--borde);
+            border-left-width: 1px;
+            border-radius: 4px;
+        }
+
+        .carpeta { display: none; }
+
+        .linea {
+            grid-template-columns: 34px 1fr;
+            gap: 12px;
+            padding-right: 14px;
+        }
+
+        .acciones,
+        .cabecera-seccion {
+            padding-left: 46px;
+        }
+
+        .terminal,
+        .paneles {
+            margin-left: 46px;
+            margin-right: 14px;
+        }
+
+        .paneles {
+            grid-template-columns: 1fr;
+        }
+
+        .fila {
+            grid-template-columns: 1fr;
+            gap: 2px;
+        }
+
+        .fila .permisos { display: none; }
+    }
+
+    @media (max-width: 520px) {
+
+        body { font-size: 13px; }
+
+        .acciones,
+        .cabecera-seccion {
+            padding-left: 14px;
+        }
+
+        .terminal,
+        .paneles {
+            margin-left: 14px;
+        }
+
+        .ruta { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            animation: none !important;
+            transition: none !important;
+            scroll-behavior: auto;
         }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f1f5f9;
-            color: #172033;
-        }
-
-
-        /* =========================
-           CABECERA
-        ========================= */
-
-        header {
-            background-color: #0f172a;
-            height: 75px;
-            padding: 0 8%;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            color: #38bdf8;
-            font-size: 30px;
-            font-weight: bold;
-        }
-
-        nav {
-            display: flex;
-            gap: 30px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-size: 15px;
-            transition: 0.3s;
-        }
-
-        nav a:hover {
-            color: #38bdf8;
-        }
-
-
-        /* =========================
-           PORTADA
-        ========================= */
-
-        .hero {
-            min-height: 600px;
-
-            background: linear-gradient(
-                135deg,
-                #0f172a,
-                #172554,
-                #075985
-            );
-
-            color: white;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            padding: 80px 10%;
-            gap: 60px;
-        }
-
-        .hero-text {
-            max-width: 700px;
-        }
-
-        .pequeno {
-            color: #38bdf8;
-            font-size: 13px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            margin-bottom: 15px;
-        }
-
-        .hero h1 {
-            font-size: 55px;
-            line-height: 1.1;
-            margin-bottom: 25px;
-        }
-
-        .hero-text > p:not(.pequeno) {
-            color: #cbd5e1;
-            font-size: 18px;
-            line-height: 1.7;
-            margin-bottom: 35px;
-        }
-
-
-        /* =========================
-           BOTÓN
-        ========================= */
-
-        .boton {
-            display: inline-block;
-
-            background-color: #38bdf8;
-            color: #082f49;
-
-            padding: 15px 25px;
-
-            border-radius: 8px;
-
-            text-decoration: none;
-            font-weight: bold;
-
-            transition: 0.3s;
-        }
-
-        .boton:hover {
-            background-color: #7dd3fc;
-            transform: translateY(-3px);
-        }
-
-
-        /* =========================
-           TARJETA DE PORTADA
-        ========================= */
-
-        .hero-card {
-            width: 300px;
-            height: 300px;
-
-            background-color: rgba(255, 255, 255, 0.08);
-
-            border: 1px solid rgba(255, 255, 255, 0.2);
-
-            border-radius: 25px;
-
-            display: flex;
-            flex-direction: column;
-
-            align-items: center;
-            justify-content: center;
-
-            text-align: center;
-        }
-
-        .hero-card .icono-grande {
-            font-size: 70px;
-            margin-bottom: 15px;
-        }
-
-        .hero-card h2 {
-            font-size: 42px;
-            color: #38bdf8;
-            margin-bottom: 10px;
-        }
-
-        .hero-card p {
-            color: #cbd5e1;
-        }
-
-
-        /* =========================
-           SECCIONES
-        ========================= */
-
-        .seccion {
-            padding: 90px 10%;
-        }
-
-        .titulo {
-            margin-bottom: 45px;
-        }
-
-        .titulo h2 {
-            font-size: 38px;
-        }
-
-
-        /* =========================
-           TARJETAS
-        ========================= */
-
-        .tarjetas {
-            display: grid;
-
-            grid-template-columns: repeat(3, 1fr);
-
-            gap: 25px;
-        }
-
-        .tarjeta {
-            background-color: white;
-
-            padding: 30px;
-
-            border-radius: 15px;
-
-            text-decoration: none;
-            color: #172033;
-
-            border: 1px solid #e2e8f0;
-
-            transition: 0.3s;
-        }
-
-        .tarjeta:hover {
-            transform: translateY(-7px);
-
-            border-color: #38bdf8;
-
-            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
-        }
-
-        .tarjeta .icono {
-            font-size: 38px;
-            margin-bottom: 20px;
-        }
-
-        .tarjeta h3 {
-            font-size: 21px;
-            margin-bottom: 12px;
-        }
-
-        .tarjeta p {
-            color: #64748b;
-            line-height: 1.6;
-        }
-
-
-        /* =========================
-           MÓDULOS
-        ========================= */
-
-        .modulos {
-            display: grid;
-
-            grid-template-columns: repeat(2, 1fr);
-
-            gap: 18px;
-        }
-
-        .modulo {
-            background-color: white;
-
-            border: 1px solid #e2e8f0;
-
-            padding: 25px;
-
-            border-radius: 12px;
-
-            transition: 0.3s;
-        }
-
-        .modulo:hover {
-            border-color: #38bdf8;
-            transform: translateY(-3px);
-        }
-
-        .modulo span {
-            color: #0284c7;
-            font-weight: bold;
-        }
-
-        .modulo h3 {
-            margin: 10px 0;
-        }
-
-        .modulo p {
-            color: #64748b;
-        }
-
-
-        /* =========================
-           BLOQUES
-        ========================= */
-
-        .bloque {
-            margin: 30px 10%;
-
-            padding: 55px;
-
-            border-radius: 20px;
-
-            background: linear-gradient(
-                135deg,
-                #0f172a,
-                #172554
-            );
-
-            color: white;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .bloque h2 {
-            font-size: 35px;
-            margin-bottom: 15px;
-        }
-
-        .bloque p:not(.pequeno) {
-            color: #cbd5e1;
-            max-width: 650px;
-            line-height: 1.6;
-        }
-
-        .numero {
-            font-size: 80px;
-            font-weight: bold;
-            color: #38bdf8;
-        }
-
-
-        /* =========================
-           FOOTER
-        ========================= */
-
-        footer {
-            margin-top: 90px;
-
-            padding: 50px 10%;
-
-            background-color: #020617;
-
-            color: white;
-        }
-
-        footer h3 {
-            color: #38bdf8;
-
-            font-size: 25px;
-
-            margin-bottom: 15px;
-        }
-
-        footer p {
-            color: #94a3b8;
-
-            margin-top: 8px;
-        }
-
-
-        /* =========================
-           MÓVILES
-        ========================= */
-
-        @media (max-width: 900px) {
-
-            header {
-                padding: 20px;
-                height: auto;
-
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            nav {
-                gap: 15px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .hero {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .hero h1 {
-                font-size: 40px;
-            }
-
-            .tarjetas {
-                grid-template-columns: 1fr;
-            }
-
-            .modulos {
-                grid-template-columns: 1fr;
-            }
-
-        }
-
-
-        @media (max-width: 600px) {
-
-            .hero {
-                padding: 60px 7%;
-            }
-
-            .hero h1 {
-                font-size: 34px;
-            }
-
-            .hero-card {
-                width: 240px;
-                height: 240px;
-            }
-
-            .seccion {
-                padding: 60px 7%;
-            }
-
-            .bloque {
-                margin: 20px 7%;
-                padding: 35px;
-            }
-
-            .numero {
-                display: none;
-            }
-
-        }
+    }
 
     </style>
 
@@ -442,531 +587,257 @@
 <body>
 
 
-    <!-- CABECERA -->
+    <!-- ===== BARRA DE TÍTULO ===== -->
 
-    <header>
-
-        <div class="logo">
-            DAM
-        </div>
-
-        <nav>
-
-            <a href="index.html">
-                Inicio
-            </a>
-
-            <a href="horario.html">
-                Horario
-            </a>
-
-            <a href="#modulos">
-                Módulos
-            </a>
-
-            <a href="#apuntes">
-                Apuntes
-            </a>
-
-            <a href="#proyectos">
-                Proyectos
-            </a>
-
-        </nav>
-
-    </header>
+    <div class="titulo-ventana">
+        <div class="semaforo"><i></i><i></i><i></i></div>
+        <div class="ruta">~/dam/index.html</div>
+    </div>
 
 
+    <!-- ===== PESTAÑAS ===== -->
 
-    <!-- PORTADA -->
-
-    <section class="hero">
-
-        <div class="hero-text">
-
-            <p class="pequeno">
-                GRADO SUPERIOR
-            </p>
-
-            <h1>
-                Desarrollo de Aplicaciones Multiplataforma
-            </h1>
-
-            <p>
-                Mi espacio personal para organizar mis estudios,
-                apuntes, ejercicios, proyectos y recursos de DAM.
-            </p>
-
-            <a class="boton" href="horario.html">
-                Ver horario
-            </a>
-
-        </div>
+    <div class="pestanas">
+        <a class="pestana activa" href="index.html">index.html<span class="punto">●</span></a>
+        <a class="pestana" href="horario.html">horario.html</a>
+        <a class="pestana" href="#modulos">modulos.js</a>
+        <a class="pestana" href="#cuaderno">cuaderno/</a>
+    </div>
 
 
-        <div class="hero-card">
-
-            <div class="icono-grande">
-                💻
-            </div>
-
-            <h2>
-                DAM
-            </h2>
-
-            <p>
-                Aprender · Crear · Programar
-            </p>
-
-        </div>
-
-    </section>
+    <div class="espacio">
 
 
+        <!-- ===== EXPLORADOR ===== -->
 
-    <!-- ORGANIZACIÓN -->
+        <aside class="explorador">
 
-    <section class="seccion">
+            <p class="titulo-panel">EXPLORADOR</p>
 
-        <div class="titulo">
+            <p class="carpeta">▾ dam</p>
 
-            <p class="pequeno">
-                ORGANIZACIÓN
-            </p>
+            <nav class="arbol">
+                <a href="index.html">index<span class="ext">.html</span></a>
+                <a href="horario.html">horario<span class="ext">.html</span></a>
+                <a href="#modulos">modulos<span class="ext">.js</span></a>
+                <a href="#apuntes">apuntes<span class="ext">.md</span></a>
+                <a href="#ejercicios">ejercicios<span class="ext">.md</span></a>
+                <a href="#proyectos">proyectos<span class="ext">.md</span></a>
+                <a href="#recursos">recursos<span class="ext">.md</span></a>
+            </nav>
 
-            <h2>
-                Mi espacio de estudio
-            </h2>
-
-        </div>
+        </aside>
 
 
-        <div class="tarjetas">
+        <!-- ===== EDITOR ===== -->
+
+        <main class="editor">
 
 
-            <a href="horario.html" class="tarjeta">
+            <!-- PORTADA -->
 
-                <div class="icono">
-                    🗓️
+            <section id="inicio" class="portada">
+
+                <div class="codigo">
+
+                    <div class="linea"><span class="cm">/**</span></div>
+                    <div class="linea"><span class="cm"> * Grado Superior · Curso 2025/2026</span></div>
+                    <div class="linea"><span class="cm"> */</span></div>
+                    <div class="linea">&nbsp;</div>
+
+                    <div class="linea">
+                        <h1>Desarrollo de Aplicaciones Multiplataforma<span class="cursor"></span></h1>
+                    </div>
+
+                    <div class="linea">&nbsp;</div>
+
+                    <div class="linea"><span class="kw">const</span> <span class="fn">alumno</span> <span class="pt">=</span> <span class="pt">{</span></div>
+                    <div class="linea sangria"><span class="vr">nombre</span><span class="pt">:</span> <span class="st">"Manuel Sánchez Ruiz"</span><span class="pt">,</span></div>
+                    <div class="linea sangria"><span class="vr">ciclo</span><span class="pt">:</span> <span class="st">"DAM"</span><span class="pt">,</span></div>
+                    <div class="linea sangria"><span class="vr">modulos</span><span class="pt">:</span> <span class="nu">10</span><span class="pt">,</span></div>
+                    <div class="linea sangria"><span class="vr">objetivo</span><span class="pt">:</span> <span class="st">"aprender, crear, programar"</span><span class="pt">,</span></div>
+                    <div class="linea sangria"><span class="vr">estado</span><span class="pt">:</span> <span class="st">"en curso"</span></div>
+                    <div class="linea"><span class="pt">};</span></div>
+
+                    <div class="linea">&nbsp;</div>
+                    <div class="linea"><span class="cm">// Aquí guardo el horario, los apuntes, los ejercicios</span></div>
+                    <div class="linea"><span class="cm">// y los proyectos de cada módulo del ciclo.</span></div>
+
                 </div>
 
-                <h3>
-                    Horario
-                </h3>
-
-                <p>
-                    Consulta mi horario semanal y organiza
-                    las clases de cada módulo.
-                </p>
-
-            </a>
-
-
-            <a href="#modulos" class="tarjeta">
-
-                <div class="icono">
-                    📚
+                <div class="acciones">
+                    <a class="boton" href="horario.html">Ver mi horario</a>
+                    <a class="boton-borde" href="#modulos">Ir a los módulos</a>
                 </div>
 
-                <h3>
-                    Módulos
-                </h3>
-
-                <p>
-                    Consulta los módulos y contenidos
-                    que forman parte de DAM.
-                </p>
-
-            </a>
+            </section>
 
 
-            <a href="#apuntes" class="tarjeta">
+            <!-- ÍNDICE EN FORMA DE TERMINAL -->
 
-                <div class="icono">
-                    📖
+            <section class="seccion">
+
+                <div class="cabecera-seccion">
+                    <h2>Qué hay en esta web</h2>
+                    <p class="contador">6 secciones</p>
                 </div>
 
-                <h3>
-                    Apuntes
-                </h3>
+                <div class="terminal">
 
-                <p>
-                    Apuntes, resúmenes y contenidos
-                    importantes para estudiar.
-                </p>
+                    <div class="terminal-barra">TERMINAL</div>
 
-            </a>
+                    <div class="terminal-cuerpo">
 
+                        <p class="prompt">
+                            <span class="usuario">manuel@dam</span><span class="pt">:</span><span class="dir">~/dam</span><span class="pt">$</span> ls -la
+                        </p>
 
-            <a href="#ejercicios" class="tarjeta">
+                        <a class="fila" href="horario.html">
+                            <span class="permisos">-rw-r--r--</span>
+                            <span class="nombre">horario.html</span>
+                            <span>Las clases de la semana, módulo a módulo</span>
+                        </a>
 
-                <div class="icono">
-                    📝
+                        <a class="fila" href="#modulos">
+                            <span class="permisos">-rw-r--r--</span>
+                            <span class="nombre">modulos.js</span>
+                            <span>Los diez módulos del ciclo</span>
+                        </a>
+
+                        <a class="fila" href="#apuntes">
+                            <span class="permisos">-rw-r--r--</span>
+                            <span class="nombre">apuntes.md</span>
+                            <span>Teoría y resúmenes para repasar</span>
+                        </a>
+
+                        <a class="fila" href="#ejercicios">
+                            <span class="permisos">-rw-r--r--</span>
+                            <span class="nombre">ejercicios.md</span>
+                            <span>Prácticas hechas en clase y en casa</span>
+                        </a>
+
+                        <a class="fila" href="#proyectos">
+                            <span class="permisos">-rw-r--r--</span>
+                            <span class="nombre">proyectos.md</span>
+                            <span>Trabajos del curso y cosas propias</span>
+                        </a>
+
+                        <a class="fila" href="#recursos">
+                            <span class="permisos">-rw-r--r--</span>
+                            <span class="nombre">recursos.md</span>
+                            <span>Documentación y herramientas del día a día</span>
+                        </a>
+
+                    </div>
+
                 </div>
 
-                <h3>
-                    Ejercicios
-                </h3>
-
-                <p>
-                    Ejercicios y prácticas realizados
-                    durante el curso.
-                </p>
-
-            </a>
+            </section>
 
 
-            <a href="#proyectos" class="tarjeta">
+            <!-- MÓDULOS -->
 
-                <div class="icono">
-                    🚀
+            <section id="modulos" class="seccion">
+
+                <div class="cabecera-seccion">
+                    <h2>modulos.js</h2>
+                    <p class="contador">10 módulos</p>
                 </div>
 
-                <h3>
-                    Proyectos
-                </h3>
+                <div class="codigo">
 
-                <p>
-                    Proyectos de clase y proyectos
-                    personales.
-                </p>
+                    <div class="linea"><span class="kw">export const</span> <span class="fn">modulos</span> <span class="pt">= [</span></div>
 
-            </a>
+                    <div class="linea sangria"><span class="pt">{</span> <span class="vr">id</span><span class="pt">:</span> <span class="st">"01"</span><span class="pt">,</span> <span class="vr">nombre</span><span class="pt">:</span> <span class="st">"Programación"</span> <span class="pt">},</span>            <span class="cm">// desarrollo y programación de aplicaciones</span></div>
+                    <div class="linea sangria"><span class="pt">{</span> <span class="vr">id</span><span class="pt">:</span> <span class="st">"02"</span><span class="pt">,</span> <span class="vr">nombre</span><span class="pt">:</span> <span class="st">"Bases de Datos"</span> <span class="pt">},</span>          <span class="cm">// diseño, gestión y consultas</span></div>
+                    <div class="linea sangria"><span class="pt">{</span> <span class="vr">id</span><span class="pt">:</span> <span class="st">"03"</span><span class="pt">,</span> <span class="vr">nombre</span><span class="pt">:</span> <span class="st">"Lenguajes de Marcas"</span> <span class="pt">},</span>     <span class="cm">// HTML, CSS, XML y web</span></div>
+                    <div class="linea sangria"><span class="pt">{</span> <span class="vr">id</span><span class="pt">:</span> <span class="st">"04"</span><span class="pt">,</span> <span class="vr">nombre</span><span class="pt">:</span> <span class="st">"Entornos de Desarrollo"</span> <span class="pt">},</span>  <span class="cm">// herramientas y metodologías</span></div>
+                    <div class="linea sangria"><span class="pt">{</span> <span class="vr">id</span><span class="pt">:</span> <span class="st">"05"</span><span class="pt">,</span> <span class="vr">nombre</span><span class="pt">:</span> <span class="st">"Sistemas Informáticos"</span> <span class="pt">},</span>   <span class="cm">// sistemas, hardware y software</span></div>
+                    <div class="linea sangria"><span class="pt">{</span> <span class="vr">id</span><span class="pt">:</span> <span class="st">"06"</span><span class="pt">,</span> <span class="vr">nombre</span><span class="pt">:</span> <span class="st">"Digitalización"</span> <span class="pt">},</span>          <span class="cm">// transformación digital</span></div>
+                    <div class="linea sangria"><span class="pt">{</span> <span class="vr">id</span><span class="pt">:</span> <span class="st">"07"</span><span class="pt">,</span> <span class="vr">nombre</span><span class="pt">:</span> <span class="st">"IPE I"</span> <span class="pt">},</span>                   <span class="cm">// itinerario para la empleabilidad</span></div>
+                    <div class="linea sangria"><span class="pt">{</span> <span class="vr">id</span><span class="pt">:</span> <span class="st">"08"</span><span class="pt">,</span> <span class="vr">nombre</span><span class="pt">:</span> <span class="st">"Sostenibilidad"</span> <span class="pt">},</span>          <span class="cm">// aplicada al sistema productivo</span></div>
+                    <div class="linea sangria"><span class="pt">{</span> <span class="vr">id</span><span class="pt">:</span> <span class="st">"09"</span><span class="pt">,</span> <span class="vr">nombre</span><span class="pt">:</span> <span class="st">"Inglés Profesional"</span> <span class="pt">},</span>      <span class="cm">// inglés del ámbito técnico</span></div>
+                    <div class="linea sangria"><span class="pt">{</span> <span class="vr">id</span><span class="pt">:</span> <span class="st">"10"</span><span class="pt">,</span> <span class="vr">nombre</span><span class="pt">:</span> <span class="st">"Proyecto Intermodular"</span> <span class="pt">}</span>    <span class="cm">// integra todo el ciclo</span></div>
 
+                    <div class="linea"><span class="pt">];</span></div>
 
-            <a href="#recursos" class="tarjeta">
-
-                <div class="icono">
-                    🔗
                 </div>
 
-                <h3>
-                    Recursos
-                </h3>
+            </section>
 
-                <p>
-                    Documentación, herramientas y
-                    recursos útiles.
-                </p>
 
-            </a>
+            <!-- CUADERNO -->
 
+            <section id="cuaderno" class="seccion">
 
-        </div>
+                <div class="cabecera-seccion">
+                    <h2>Mi cuaderno</h2>
+                    <p class="contador">se va llenando durante el curso</p>
+                </div>
 
-    </section>
+                <div class="paneles">
 
+                    <article id="apuntes" class="panel">
+                        <div class="panel-barra"><span>apuntes.md</span><span>0 KB</span></div>
+                        <div class="panel-cuerpo">
+                            <p># Teoría, resúmenes y esquemas por módulo.</p>
+                            <p class="todo">// TODO: crear apuntes.html y enlazarlo aquí</p>
+                        </div>
+                    </article>
 
+                    <article id="ejercicios" class="panel">
+                        <div class="panel-barra"><span>ejercicios.md</span><span>0 KB</span></div>
+                        <div class="panel-cuerpo">
+                            <p># Prácticas y actividades resueltas del curso.</p>
+                            <p class="todo">// TODO: crear ejercicios.html y enlazarlo aquí</p>
+                        </div>
+                    </article>
 
-    <!-- MÓDULOS -->
+                    <article id="proyectos" class="panel">
+                        <div class="panel-barra"><span>proyectos.md</span><span>0 KB</span></div>
+                        <div class="panel-cuerpo">
+                            <p># Trabajos de clase y proyectos personales.</p>
+                            <p class="todo">// TODO: crear proyectos.html y enlazarlo aquí</p>
+                        </div>
+                    </article>
 
-    <section id="modulos" class="seccion">
+                    <article id="recursos" class="panel">
+                        <div class="panel-barra"><span>recursos.md</span><span>0 KB</span></div>
+                        <div class="panel-cuerpo">
+                            <p># Documentación, herramientas y sitios útiles.</p>
+                            <p class="todo">// TODO: crear recursos.html y enlazarlo aquí</p>
+                        </div>
+                    </article>
 
-        <div class="titulo">
+                </div>
 
-            <p class="pequeno">
-                FORMACIÓN
-            </p>
+            </section>
 
-            <h2>
-                Módulos de DAM
-            </h2>
 
-        </div>
+            <!-- PIE -->
 
+            <section class="seccion">
+                <div class="codigo">
+                    <div class="linea"><span class="cm">/* Manuel Sánchez Ruiz · DAM · © 2026 */</span></div>
+                    <div class="linea"><a href="#inicio"><span class="kw">return</span> <span class="fn">arriba</span><span class="pt">();</span></a></div>
+                </div>
+            </section>
 
-        <div class="modulos">
 
+        </main>
 
-            <div class="modulo">
+    </div>
 
-                <span>01</span>
 
-                <h3>
-                    Programación
-                </h3>
+    <!-- ===== BARRA DE ESTADO ===== -->
 
-                <p>
-                    Desarrollo y programación de aplicaciones.
-                </p>
-
-            </div>
-
-
-            <div class="modulo">
-
-                <span>02</span>
-
-                <h3>
-                    Bases de Datos
-                </h3>
-
-                <p>
-                    Diseño, gestión y consultas de bases de datos.
-                </p>
-
-            </div>
-
-
-            <div class="modulo">
-
-                <span>03</span>
-
-                <h3>
-                    Lenguajes de Marcas
-                </h3>
-
-                <p>
-                    HTML, CSS, XML y tecnologías web.
-                </p>
-
-            </div>
-
-
-            <div class="modulo">
-
-                <span>04</span>
-
-                <h3>
-                    Entornos de Desarrollo
-                </h3>
-
-                <p>
-                    Herramientas y metodologías de desarrollo.
-                </p>
-
-            </div>
-
-
-            <div class="modulo">
-
-                <span>05</span>
-
-                <h3>
-                    Sistemas Informáticos
-                </h3>
-
-                <p>
-                    Sistemas, hardware y software.
-                </p>
-
-            </div>
-
-
-            <div class="modulo">
-
-                <span>06</span>
-
-                <h3>
-                    Digitalización
-                </h3>
-
-                <p>
-                    Tecnologías digitales y transformación digital.
-                </p>
-
-            </div>
-
-
-            <div class="modulo">
-
-                <span>07</span>
-
-                <h3>
-                    IPE I
-                </h3>
-
-                <p>
-                    Itinerario personal para la empleabilidad.
-                </p>
-
-            </div>
-
-
-            <div class="modulo">
-
-                <span>08</span>
-
-                <h3>
-                    Sostenibilidad
-                </h3>
-
-                <p>
-                    Sostenibilidad aplicada al sistema productivo.
-                </p>
-
-            </div>
-
-
-            <div class="modulo">
-
-                <span>09</span>
-
-                <h3>
-                    Inglés Profesional
-                </h3>
-
-                <p>
-                    Inglés aplicado al ámbito profesional.
-                </p>
-
-            </div>
-
-
-            <div class="modulo">
-
-                <span>10</span>
-
-                <h3>
-                    Proyecto Intermodular
-                </h3>
-
-                <p>
-                    Integración de los conocimientos del ciclo.
-                </p>
-
-            </div>
-
-
-        </div>
-
-    </section>
-
-
-
-    <!-- APUNTES -->
-
-    <section id="apuntes" class="bloque">
-
-        <div>
-
-            <p class="pequeno">
-                ESTUDIO
-            </p>
-
-            <h2>
-                Apuntes
-            </h2>
-
-            <p>
-                Aquí iré organizando mis apuntes,
-                resúmenes y contenidos importantes.
-            </p>
-
-        </div>
-
-        <div class="numero">
-            01
-        </div>
-
-    </section>
-
-
-
-    <!-- EJERCICIOS -->
-
-    <section id="ejercicios" class="bloque">
-
-        <div>
-
-            <p class="pequeno">
-                PRÁCTICA
-            </p>
-
-            <h2>
-                Ejercicios
-            </h2>
-
-            <p>
-                Ejercicios, actividades y prácticas
-                realizadas durante el curso.
-            </p>
-
-        </div>
-
-        <div class="numero">
-            02
-        </div>
-
-    </section>
-
-
-
-    <!-- PROYECTOS -->
-
-    <section id="proyectos" class="bloque">
-
-        <div>
-
-            <p class="pequeno">
-                DESARROLLO
-            </p>
-
-            <h2>
-                Proyectos
-            </h2>
-
-            <p>
-                Proyectos de clase y proyectos personales
-                realizados durante DAM.
-            </p>
-
-        </div>
-
-        <div class="numero">
-            03
-        </div>
-
-    </section>
-
-
-
-    <!-- RECURSOS -->
-
-    <section id="recursos" class="bloque">
-
-        <div>
-
-            <p class="pequeno">
-                APRENDIZAJE
-            </p>
-
-            <h2>
-                Recursos
-            </h2>
-
-            <p>
-                Documentación, herramientas y recursos
-                útiles para seguir aprendiendo.
-            </p>
-
-        </div>
-
-        <div class="numero">
-            04
-        </div>
-
-    </section>
-
-
-
-    <!-- FOOTER -->
-
-    <footer>
-
-        <h3>
-            💻 DAM
-        </h3>
-
-        <p>
-            Manuel Sánchez Ruiz · Desarrollo de Aplicaciones Multiplataforma
-        </p>
-
-        <p>
-            © 2026
-        </p>
-
-    </footer>
+    <div class="estado">
+        <span class="rama">⎇ main</span>
+        <span>index.html</span>
+        <span>UTF-8</span>
+        <span>HTML</span>
+        <span class="derecha">Manuel Sánchez Ruiz</span>
+    </div>
 
 
 </body>
